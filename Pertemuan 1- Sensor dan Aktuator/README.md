@@ -64,7 +64,7 @@ if (suhu > suhuThreshold) {
 ```
 Di dalam blok else (jika pembacaan sensor berhasil), terdapat percabangan sekunder. Jika nilai suhu lebih besar dari 30 derajat celsius, maka mikrokontroler mengirimkan sinyal HIGH untuk menyalakan Relay/LED. Jika kondisi tersebut tidak terpenuhi (suhu <= 30 derajat celsius), maka mikrokontroler mengirimkan sinyal LOW untuk mematikan aktuator.
 -----
-# 4. Jawaban Praktikum Berkaitan dengan kode
+# 4. Jawaban Praktikum yang Berkaitan dengan kode
 ## A. Modifikasi Percobaan 1: Rata-rata 5 Kali Pembacaan
 Untuk meningkatkan akurasi, program dimodifikasi agar mengambil 5 sampel data, menjumlahkannya, dan membaginya dengan 5 untuk mendapatkan nilai rata-rata sebelum ditampilkan.
 
@@ -93,7 +93,7 @@ Penambahan/Modifikasi Kode Utama pada void loop():
 - `float rataSuhu = sumSuhu / 5.0;`: Membuat variabel baru rataSuhu yang didapat dari total penjumlahan suhu (sumSuhu) bagian 5.0.
 - `float rataKelembaban = sumKelembaban / 5.0;`: Membuat variabel baru rataKelembaban yang didapat dari total penjumlahan kelembaban (sumKelembaban) bagian 5.0.
   
-## B. Modifikasi Percobaan 2: Kendali Aktuator dengan Histerisis (Dua Ambang Batas)Penambahan/Modifikasi Kode Utama (mengganti variabel suhuThreshold tunggal):
+## B. Modifikasi Percobaan 2: Kendali Aktuator dengan Histerisis (Dua Ambang Batas) Penambahan/Modifikasi Kode Utama (mengganti variabel suhuThreshold tunggal):
 ```
 const float suhuBatasAtas = 30.0;
 const float suhuBatasBawah = 28.0;
