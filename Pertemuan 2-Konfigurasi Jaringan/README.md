@@ -9,9 +9,8 @@ Modul 2: Konfigurasi Jaringan WiFi
   memantau jumlah klien yang terhubung ke jaringannya.
   
 # Library atau Dependencies yang Diperlukan
- ```
-- <ESP8266WiFi.h>
- ```
+ 
+- `<ESP8266WiFi.h>`
 
 # Penjelasan Code dan Setiap Fungsi
 
@@ -47,6 +46,8 @@ Percabangan logika digunakan pada Percobaan 1 (Mode STA) untuk memastikan perang
   mengembalikan `WL_CONNECTED` (benar), program mencetak "Status: Terhubung". Jika bernilai salah (misal koneksi terputus/loss), alur
   berpindah ke blok `else`, mencetak peringatan "Status: Terputus", dan mematikan suplai daya pada LED indikator menggunakan perintah
   `digitalWrite(ledPin, LOW)`.
+
+-----
 
 # Jawaban Pertanyaan Praktikum
 ## 1. Modifikasi Percobaan 1: Fitur Auto-Reconnect pada Mode Station
