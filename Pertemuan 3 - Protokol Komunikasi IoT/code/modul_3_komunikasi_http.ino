@@ -67,7 +67,6 @@ void loop() {
       }
 
       http.end();
-
     } else {
       Serial.println("Gagal memulai koneksi HTTP");
     }
