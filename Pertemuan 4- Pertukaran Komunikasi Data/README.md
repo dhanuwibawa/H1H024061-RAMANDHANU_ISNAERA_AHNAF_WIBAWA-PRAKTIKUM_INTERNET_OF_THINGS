@@ -30,29 +30,28 @@ berformat JSON pada topik tertentu, memecah data tersebut (deserialisasi), lalu 
 ## Jawaban Pertanyaan Praktikum 4A (Modifikasi PWM)
 Untuk menambahkan fitur mengatur intensitas kecerahan LED melalui PWM berdasarkan pesan JSON seperti `{"perintah": "ON", "intensitas": 200}`, berikut 
 adalah modifikasi kode pada fungsi `callback`:
-```
+```cpp
 // ... kode bagian atas fungsi callback tetap sama ...
-  
-  // Deserialisasi data JSON yang diterima
-  JsonDocument doc;
-  DeserializationError error = deserializeJson(doc, pesan);
-  if (error) {
-    Serial.print("Gagal parsing JSON: ");
-    Serial.println(error.c_str());
-    return;
-  }
 
-  const char* perintah = doc["perintah"];
-  int intensitas = doc["intensitas"]; // TAMBAHAN: Mengambil nilai "intensitas" berformat integer dari objek JSON
+// Deserialisasi data JSON yang diterima
+JsonDocument doc;
+DeserializationError error = deserializeJson(doc, pesan);
+if (error) {
+  Serial.print("Gagal parsing JSON: ");
+  Serial.println(error.c_str());
+  return;
+}
 
-  if (String(perintah) == "ON") {
-    analogWrite(ledPin, intensitas); // TAMBAHAN: Menggunakan analogWrite (PWM) untuk mengatur kecerahan LED (0-1023 untuk ESP8266)
-    Serial.print("Aktuator: ON, Intensitas: ");
-    Serial.println(intensitas); // TAMBAHAN: Mencetak nilai intensitas ke Serial Monitor
-  } else if (String(perintah) == "OFF") {
-    analogWrite(ledPin, 0); // TAMBAHAN: Mematikan LED dengan mengatur duty cycle PWM ke 0
-    Serial.println("Aktuator: OFF");
-  }
+const char* perintah = doc["perintah"];
+int intensitas = doc["intensitas"]; // TAMBAHAN: Mengambil nilai "intensitas" berformat integer dari objek JSON
+
+if (String(perintah) == "ON") {
+  analogWrite(ledPin, intensitas); // TAMBAHAN: Menggunakan analogWrite (PWM) untuk mengatur kecerahan LED (0-1023 untuk ESP8266)
+  Serial.print("Aktuator: ON, Intensitas: ");
+  Serial.println(intensitas); // TAMBAHAN: Mencetak nilai intensitas ke Serial Monitor
+} else if (String(perintah) == "OFF") {
+  analogWrite(ledPin, 0); // TAMBAHAN: Mematikan LED dengan mengatur duty cycle PWM ke 0
+  Serial.println("Aktuator: OFF");
 }
 ```
 
@@ -73,7 +72,7 @@ setiap 5 detik ke satu topik, sementara di saat yang sama ia terus mendengarkan 
 Untuk menambahkan kontrol aktuator kedua (misal: Buzzer) dengan topik MQTT terpisah, kita harus memodifikasi variabel deklarasi, pendaftaran 
 berlangganan, dan memeriksa variabel `topic` pada fungsi `callback`.
 Modifikasi Kode:
-```
+```cpp
 // 1. TAMBAHAN DEKLARASI GLOBAL (di bagian atas program)
 const char* topicBuzzer = "unsoed/tk245004/kelompok5/buzzer"; // Definisi topik khusus untuk buzzer
 const int buzzerPin = 12; // (misal GPIO12/D6) Deklarasi pin untuk aktuator kedua
