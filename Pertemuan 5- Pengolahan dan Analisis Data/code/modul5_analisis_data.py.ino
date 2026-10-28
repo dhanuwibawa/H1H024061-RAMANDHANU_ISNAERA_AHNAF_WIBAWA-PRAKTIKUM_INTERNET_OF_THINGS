@@ -1,27 +1,40 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <math.h>
 
-const char* ssid = "Nxxy";
-const char* password = "Nuxxccyy";
-
+// Konfigurasi WiFi & MQTT Broker
+const char* ssid = "Infinix NOTE 30";
+const char* password = "passwordnyayaitu";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 
-const char* topic = "unsoed/tk245004/kelompok5/data";
+// Definisikan Topik MQTT di sini
+const char* topicData = "unsoed/tk245004/kelompok4/data"; 
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+const int N = 5;
+float buffer[N];
+int indeks = 0;
+int jumlah = 0;
+
+float suhuMin = 1000.0;
+float suhuMax = -1000.0;
+
+// Mock function pengganti sensor DHT22
 float bacaSuhuMock() {
     static unsigned long jumlahBaca = 0;
     jumlahBaca++;
 
+    // Suhu dasar berubah secara bertahap
     float suhuDasar = 28.0 + 2.0 * sin(jumlahBaca * 0.08);
+
+    // Noise kecil untuk mensimulasikan fluktuasi sensor
     float noise = random(-5, 6) * 0.1;
 
     float suhu = suhuDasar + noise;
 
+    // Lonjakan suhu setiap 25 pembacaan untuk simulasi anomali
     if (jumlahBaca % 25 == 0) {
         suhu += 8.0;
     }
@@ -29,74 +42,39 @@ float bacaSuhuMock() {
     return suhu;
 }
 
-void setupWiFi() {
-    delay(10);
-    Serial.println();
-    Serial.print("Menghubungkan ke Wi-Fi: ");
-    Serial.println(ssid);
+float hitungMovingAverage(float nilaiBaru) {
+    buffer[indeks] = nilaiBaru;
+    indeks = (indeks + 1) % N;
+    if (jumlah < N) jumlah++;
 
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
+    float total = 0;
+    for (int i = 0; i < jumlah; i++) {
+        total += buffer[i];
     }
-
-    Serial.println();
-    Serial.println("Wi-Fi terhubung!");
-    Serial.print("IP ESP8266: ");
-    Serial.println(WiFi.localIP());
-}
-
-void reconnectMQTT() {
-    while (!client.connected()) {
-        Serial.print("Menghubungkan ke MQTT...");
-
-        String clientId = "ESP8266-Kelompok2-";
-        clientId += String(ESP.getChipId(), HEX);
-
-        if (client.connect(clientId.c_str())) {
-            Serial.println("berhasil!");
-        } else {
-            Serial.print("gagal, kode: ");
-            Serial.println(client.state());
-            delay(3000);
-        }
-    }
+    return total / jumlah;
 }
 
 void setup() {
     Serial.begin(115200);
-    randomSeed(analogRead(A0));
-
-    setupWiFi();
-
-    client.setServer(mqtt_server, mqtt_port);
 }
 
 void loop() {
-    if (WiFi.status() != WL_CONNECTED) {
-        setupWiFi();
-    }
-
-    if (!client.connected()) {
-        reconnectMQTT();
-    }
-
-    client.loop();
-
+    // Menggunakan fungsi mock sebagai pengganti pembacaan dht.readTemperature()
     float suhu = bacaSuhuMock();
 
-    char payload[64];
-    snprintf(payload, sizeof(payload), "{\"suhu\":%.2f}", suhu);
+    float suhuFilter = hitungMovingAverage(suhu);
+    
+    if (suhu < suhuMin) suhuMin = suhu;
+    if (suhu > suhuMax) suhuMax = suhu;
 
-    bool berhasil = client.publish(topic, payload);
-
-    Serial.print("Suhu: ");
+    Serial.print("Mentah: ");
     Serial.print(suhu);
-    Serial.print(" C | MQTT: ");
-    Serial.println(berhasil ? "Terkirim" : "Gagal");
+    Serial.print(" | Filter: ");
+    Serial.print(suhuFilter);
+    Serial.print(" | Min: ");
+    Serial.print(suhuMin);
+    Serial.print(" | Max: ");
+    Serial.println(suhuMax);
 
     delay(2000);
 }
