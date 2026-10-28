@@ -1,3 +1,5 @@
+#include <math.h>
+
 const int N = 5;
 float buffer[N];
 int indeks = 0;
