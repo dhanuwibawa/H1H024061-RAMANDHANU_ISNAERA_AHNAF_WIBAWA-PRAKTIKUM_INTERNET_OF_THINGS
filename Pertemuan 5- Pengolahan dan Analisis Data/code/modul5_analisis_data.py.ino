@@ -1,14 +1,15 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <math.h>
 
 // Konfigurasi WiFi & MQTT Broker
-const char* ssid = "Infinix NOTE 30";
-const char* password = "passwordnyayaitu";
+const char* ssid = "Nxxy";
+const char* password = "Nuxxccyy";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 
 // Definisikan Topik MQTT di sini
-const char* topicData = "unsoed/tk245004/kelompok4/data"; 
+const char* topicData = "unsoed/tk245004/kelompok5/data"; 
 
 WiFiClient espClient;
 PubSubClient client(espClient);
